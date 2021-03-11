@@ -84,7 +84,9 @@ class CheckStep implements StepInterface
 
         $this->configIsWritable = $configurator->isFileWritable();
         $this->kernelRoot       = $kernelRoot;
-        $this->site_url         = $request->getSchemeAndHttpHost().$request->getBasePath();
+        if (!empty($request)) {
+            $this->site_url     = $request->getSchemeAndHttpHost().$request->getBasePath();
+        }
         $this->openSSLCipher    = $openSSLCipher;
     }
 
@@ -236,7 +238,7 @@ class CheckStep implements StepInterface
 
         $memoryLimit    = FileHelper::convertPHPSizeToBytes(ini_get('memory_limit'));
         $suggestedLimit = FileHelper::convertPHPSizeToBytes(self::$memory_limit);
-        if ($memoryLimit < $suggestedLimit) {
+        if ($memoryLimit > -1 && $memoryLimit < $suggestedLimit) {
             $messages[] = 'mautic.install.memory.limit';
         }
 
